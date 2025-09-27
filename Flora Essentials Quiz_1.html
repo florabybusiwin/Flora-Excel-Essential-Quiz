@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flora Excel Essentials Quiz</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #FFFFFF;
+        color: #017892;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        color: #F79359;
+    }
+    .quiz-container {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid #017892;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .question h3 {
+        margin-bottom: 15px;
+    }
+    .options label {
+        display: block;
+        margin-bottom: 10px;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    .options label.correct {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .options label.incorrect {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    button {
+        background-color: #017892;
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    button:hover {
+        background-color: #F79359;
+    }
+    #progressBar {
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+    #progress {
+        height: 15px;
+        width: 0%;
+        background-color: #017892;
+        border-radius: 20px;
+    }
+    #result {
+        font-size: 20px;
+        font-weight: bold;
+        color: #F79359;
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Flora Excel Essentials Certificate (Basics)</h1>
+
+<div class="quiz-container" id="quiz">
+    <div id="progressBar"><div id="progress"></div></div>
+    <div id="question-container"></div>
+    <button id="nextBtn" onclick="nextQuestion()">Next</button>
+    <div id="result"></div>
+</div>
+
+<script>
+const quizData = [
+    {q: "What is the shortcut to copy a selected cell in Excel?", a:["Ctrl + C","Ctrl + V","Ctrl + X","Ctrl + Z"], correct:0},
+    {q: "Which function calculates the average of a range of cells?", a:["SUM()","AVG()","AVERAGE()","COUNT()"], correct:2},
+    {q: "Which tab is used to create charts in Excel?", a:["Home","Insert","View","Data"], correct:1},
+    {q: "What does the SUM function do?", a:["Multiplies values","Adds values","Finds average","Finds maximum"], correct:1},
+    {q: "Which key combination undoes the last action?", a:["Ctrl + Z","Ctrl + Y","Ctrl + X","Ctrl + C"], correct:0},
+    {q: "How can you quickly select an entire column?", a:["Click the row number","Click the column letter","Press Ctrl + C","Press Ctrl + A twice"], correct:1},
+    {q: "Which feature helps to filter and sort data easily?", a:["PivotTable","Conditional Formatting","Data Validation","Flash Fill"], correct:0},
+    {q: "Which function counts the number of cells containing numbers?", a:["COUNT()","COUNTA()","COUNTIF()","SUM()"], correct:0},
+    {q: "Which function joins text from multiple cells?", a:["CONCATENATE()","JOIN()","TEXTJOIN()","MERGE()"], correct:2},
+    {q: "How do you freeze panes to keep rows/columns visible while scrolling?", a:["View > Freeze Panes","Data > Freeze Panes","Home > Freeze Panes","Insert > Freeze Panes"], correct:0},
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+    answered = false; // Reset answered status for new question
+    const container = document.getElementById("question-container");
+    container.innerHTML = "";
+    if(currentQuestion < quizData.length) {
+        const qData = quizData[currentQuestion];
+        const qElem = document.createElement("div");
+        qElem.classList.add("question");
+        qElem.innerHTML = `<h3>${currentQuestion+1}. ${qData.q}</h3>`;
+        
+        const optionsDiv = document.createElement("div");
+        optionsDiv.classList.add("options");
+        
+        qData.a.forEach((option, index) => {
+            const label = document.createElement("label");
+            label.innerHTML = `<input type="radio" name="option" value="${index}"> ${option}`;
+            label.onclick = () => checkAnswer(index, label);
+            optionsDiv.appendChild(label);
+        });
+
+        qElem.appendChild(optionsDiv);
+        container.appendChild(qElem);
+
+        // Update progress bar
+        const progress = document.getElementById("progress");
+        progress.style.width = `${(currentQuestion/quizData.length)*100}%`;
+    } else {
+        showResult();
+    }
+}
+
+function checkAnswer(selectedIndex, labelElem) {
+    if(answered) return; // Prevent multiple clicks
+    answered = true;
+
+    const correctIndex = quizData[currentQuestion].correct;
+    const labels = document.querySelectorAll(".options label");
+    labels.forEach(label => label.style.pointerEvents = "none"); // Disable all options
+
+    if(selectedIndex === correctIndex){
+        labelElem.classList.add("correct");
+        score++;
+    } else {
+        labelElem.classList.add("incorrect");
+        labels[correctIndex].classList.add("correct");
+    }
+}
+
+function nextQuestion() {
+    currentQuestion++;
+    loadQuestion();
+}
+
+function showResult() {
+    document.getElementById("question-container").innerHTML = "";
+    document.getElementById("progress").style.width = "100%";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("result").innerText = `Your final score is ${score} / ${quizData.length}`;
+}
+
+// Load first question
+loadQuestion();
+</script>
+
+</body>
+</html>
